@@ -1,21 +1,22 @@
 import React, { useState } from 'react'
 import './App.css'
+import Panel from './Components/Panel'
+import Grid from './Components/Grid'
 
 function App() {
-  const [value, setValue] = useState<string | number>('')
-
-  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const changedValue = Number(event.target.value)
-
-    if (!isNaN(changedValue)) {
-      event.target.value === '' ? setValue('') : setValue(changedValue)
-    }
-  }
+  const [height, setHeight] = useState<string | number>('')
+  const [width, setWidth] = useState<string | number>('')
 
   return (
     <div className='App'>
       <header className='App-header'>
-        <input value={value} onChange={handleChange} />
+        <Panel
+          height={height}
+          setHeight={setHeight}
+          width={width}
+          setWidth={setWidth}
+        />
+        {height !== '' ? <Grid height={height} width={width}></Grid> : <></>}
       </header>
     </div>
   )
