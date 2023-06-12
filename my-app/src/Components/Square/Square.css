@@ -1,0 +1,14 @@
+.square {
+  display: flex;
+  background-color: cadetblue;
+  height: 30px;
+  width: 30px;
+  border: 3px solid red;
+}
+
+.row {
+  flex-direction: row;
+}
+.column {
+  flex-direction: column;
+}
