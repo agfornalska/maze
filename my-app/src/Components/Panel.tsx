@@ -15,21 +15,23 @@ export default function Panel({
     const changedValue = Number(event.target.value)
 
     if (!isNaN(changedValue)) {
-      event.target.value === '' ? setHeight('') : setHeight(changedValue)
+      event.target.value === '' ? setHeight(0) : setHeight(changedValue)
     }
   }
   function handleWidthChange(event: React.ChangeEvent<HTMLInputElement>) {
     const changedValue = Number(event.target.value)
 
     if (!isNaN(changedValue)) {
-      event.target.value === '' ? setWidth('') : setWidth(changedValue)
+      event.target.value === '' ? setWidth(0) : setWidth(changedValue)
     }
   }
 
   return (
     <div className='panel'>
-      Height: <input value={height} onChange={handleHeightChange} />
-      Width: <input value={width} onChange={handleWidthChange} />
+      Height:{' '}
+      <input value={height === 0 ? '' : height} onChange={handleHeightChange} />
+      Width:{' '}
+      <input value={width === 0 ? '' : width} onChange={handleWidthChange} />
     </div>
   )
 }
