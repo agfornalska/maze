@@ -1,36 +1,50 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './App.css'
 import Panel from './Components/Panel'
 import Square from './Components/Square/Square'
 
 function App() {
-  const [height, setHeight] = useState<string | number>(3)
-  console.log('🚀 ~ file: App.tsx:8 ~ App ~ height:', height)
-  const [width, setWidth] = useState<string | number>(4)
+  const [column, setColumn] = useState<string | number>(3)
 
-  function changeSquare(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-    const newSquare = { isClicked: true }
+  const [row, setRow] = useState<string | number>(4)
+  const [gridArray, setGridArray] = useState<boolean[][]>([])
 
-    console.log('🚀 ~ file: App.tsx:15 ~ changeSquare ~ newSquare:', newSquare)
+  useEffect(() => {
+    const newGridArray = new Array(Number(column)).fill(
+      new Array(Number(row)).fill(false)
+    )
+    setGridArray(newGridArray)
+  }, [row, column])
+
+  function drawWall(columnIndex: number, rowIndex: number) {
+    let newGridArray: Array<boolean[]> = gridArray.map(
+      (arr, newColumnIndex) => [...arr]
+    )
+
+    newGridArray[rowIndex][columnIndex] = !newGridArray[rowIndex][columnIndex]
+
+    setGridArray(newGridArray)
+    console.log('🚀 ~ file: App.tsx:11 ~ App ~ gridArray:', gridArray)
   }
 
   return (
     <div className='App'>
       <header className='App-header'>
         <Panel
-          height={height}
-          setHeight={setHeight}
-          width={width}
-          setWidth={setWidth}
+          height={column}
+          setHeight={setColumn}
+          width={row}
+          setWidth={setRow}
         />
-
-        {[...new Array(height)].map((_, columnIndex) => (
-          <div key={columnIndex} className='height'>
-            {[...new Array(width)].map((_, rowIndex) => (
+        {gridArray.map((column, rowIndex) => (
+          <div key={'row' + rowIndex} className='row'>
+            {column.map((isClicked, columnIndex) => (
               <Square
-                key={rowIndex}
-                type='row'
-                changeSquare={changeSquare}
+                key={'column' + columnIndex}
+                columnIndex={columnIndex}
+                rowIndex={rowIndex}
+                isClicked={isClicked}
+                drawWall={drawWall}
               ></Square>
             ))}
           </div>

@@ -1,12 +1,24 @@
-import { useState } from 'react'
+// import { useEffect, useState } from 'react'
 import './Square.css'
 interface SquareProps {
-  type: string
-  changeSquare: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
+  columnIndex: number
+  rowIndex: number
+  isClicked: boolean
+  drawWall: (columnIndex: number, rowIndex: number) => void
 }
 
-export default function Square({ type, changeSquare }: SquareProps) {
-  const [squares, setSquares] = useState<Object>({})
-
-  return <div className='square' onClick={(event) => changeSquare(event)}></div>
+export default function Square({
+  columnIndex,
+  rowIndex,
+  isClicked,
+  drawWall,
+}: SquareProps) {
+  return (
+    <div
+      className={!isClicked ? 'square' : 'clicked'}
+      onClick={() => drawWall(columnIndex, rowIndex)}
+    >
+      R{rowIndex}C{columnIndex}
+    </div>
+  )
 }
