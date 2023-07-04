@@ -1,9 +1,10 @@
 // import { useEffect, useState } from 'react'
+import { CellType } from '../../App'
 import './Square.css'
 interface SquareProps {
   columnIndex: number
   rowIndex: number
-  isClicked: boolean
+  isClicked: CellType
   drawWall: (columnIndex: number, rowIndex: number) => void
 }
 
@@ -15,7 +16,15 @@ export default function Square({
 }: SquareProps) {
   return (
     <div
-      className={!isClicked ? 'square' : 'clicked'}
+      className={
+        isClicked === CellType.Empty
+          ? 'square'
+          : isClicked === CellType.Wall
+          ? 'clicked'
+          : isClicked === CellType.Start
+          ? 'start'
+          : 'meta'
+      }
       onClick={() => drawWall(columnIndex, rowIndex)}
     >
       R{rowIndex}C{columnIndex}

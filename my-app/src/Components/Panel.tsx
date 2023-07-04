@@ -1,8 +1,8 @@
 interface PanelProps {
-  height: string | number
-  setHeight: (height: string | number) => void
-  width: string | number
-  setWidth: (width: string | number) => void
+  height: number
+  setHeight: (height: number) => void
+  width: number
+  setWidth: (width: number) => void
 }
 
 export default function Panel({
