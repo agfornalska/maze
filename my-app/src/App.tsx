@@ -41,84 +41,114 @@ function App() {
 
     setGridArray(newGridArray)
   }
+
   function generateRandomIndex(max: number, exclude: number | undefined) {
-    console.log(
-      '🚀 ~ file: App.tsx:45 ~ generateRandomIndex ~ exclude:',
-      exclude
-    )
     let index: number = Math.floor(Math.random() * max)
-    console.log('🚀 ~ file: App.tsx:50 ~ generateRandomIndex ~ index:', index)
 
     if (exclude) {
       if (index >= exclude - 1 && index <= exclude + 1) {
-        index = Math.floor(Math.random() * max)
-        console.log(
-          '🚀 ~ file: App.tsx:55 ~ generateRandomIndex ~ index:',
-          index,
-          ' exclude'
-        )
+        index = generateRandomIndex(max, exclude)
+        return index
       }
     }
     return index
   }
 
-  function generatePoint(wall: number, startPoint: StartingPoint | undefined) {
-    console.log(
-      '🚀 ~ file: App.tsx:55 ~ generatePoint ~ startPoint:',
-      startPoint
-    )
+  function generatePoint(
+    wall: number,
+    excludePoint: StartingPoint | undefined
+  ) {
     //jak jest mniej niz 3 to nie ten sam wall
     let rowIndex = 0
     let columnIndex = 0
 
+    console.log('🚀 ~ file: App.tsx:63 ~ App ~ excludePoint:', excludePoint)
+
     if (wall === 0 || wall === 2) {
+      //0 - left    2 - right
       rowIndex = generateRandomIndex(
         row,
-        startPoint ? startPoint.rowIndex : undefined
+        excludePoint ? excludePoint.rowIndex : undefined
       )
       columnIndex = wall === 0 ? 0 : column - 1
     }
     if (wall === 1 || wall === 3) {
+      //1 - top     3 - bottom
       columnIndex = generateRandomIndex(
         column,
-        startPoint ? startPoint.columnIndex : undefined
+        excludePoint ? excludePoint.columnIndex : undefined
       )
       rowIndex = wall === 1 ? 0 : row - 1
     }
-    console.log(
-      '🚀 ~ file: App.tsx:55 ~ generatePoint ~ wynik:',
-      rowIndex,
-      columnIndex
-    )
+
     return { rowIndex, columnIndex }
   }
 
-  function isCorner(startRowIndex: number, startColumnIndex: number) {
+  function isCorner(rowIndex: number, columnIndex: number) {
     let isCorner = false
-    if (startRowIndex === startColumnIndex) isCorner = true
-    if (startColumnIndex === column - 1 && startRowIndex === 0) isCorner = true
-    if (startRowIndex === row - 1 && startColumnIndex === 0) isCorner = true
+    if (rowIndex === columnIndex) isCorner = true
+    if (columnIndex === column - 1 && rowIndex === 0) isCorner = true
+    if (rowIndex === row - 1 && columnIndex === 0) isCorner = true
+    console.log('🚀 ~ file: App.tsx:95 ~ isCorner ~ isCorner:', isCorner)
 
     return isCorner
   }
 
-  function chooseGoalPoints() {
+  function chooseGoalPoints2() {
     if (!row || !column) return
 
     const startWall = Math.floor(Math.random() * 4)
     const endWall = Math.floor(Math.random() * 4)
-    const startPoint = generatePoint(startWall, undefined)
+    console.log('startWall:', startWall, 'endWall:', endWall)
 
+    const startPoint = generatePoint(startWall, undefined)
     const { rowIndex: startRowIndex, columnIndex: startColumnIndex } =
       startPoint
 
-    const endPoint =
-      endWall === startWall ||
-      startRowIndex === startColumnIndex ||
-      startRowIndex === 0
-        ? generatePoint(endWall, startPoint)
-        : generatePoint(endWall, undefined)
+    let endPoint: StartingPoint = generatePoint(endWall, undefined)
+    //when walls are the same and not in a corner
+    //exclude r/cSP <+1;-1>
+    if (endWall === startWall) {
+      endPoint = generatePoint(endWall, startPoint)
+    } else {
+      // when walls are NOT the same and in a corner
+      if (isCorner(startRowIndex, startColumnIndex))
+        if ((endWall + startWall) % 2 === 1) {
+          // exclude <- NOT WORKING PROP
+
+          //SP R0C0     EW1 EX C0,1 r -> 0
+          if (startRowIndex === startColumnIndex) {
+            endPoint = generatePoint(endWall, { rowIndex: 1, columnIndex: 0 })
+          }
+
+          //SP R0Cmax   EW2 EX R0,1 C-> max
+          if (startRowIndex === 0 && startColumnIndex === column) {
+            endPoint = generatePoint(endWall, {
+              rowIndex: 1,
+              columnIndex: column,
+            })
+          }
+
+          //SP RmaxCmax EW3 EX Rmax,max-1 C-> max
+          if (startRowIndex === row && startColumnIndex === column) {
+            endPoint = generatePoint(endWall, {
+              rowIndex: row - 1,
+              columnIndex: column,
+            })
+          }
+
+          //SP RmaxC0   EW0 EX Rmax,max-1 C -> max
+          if (startRowIndex === row && startColumnIndex === column) {
+            endPoint = generatePoint(endWall, {
+              rowIndex: row,
+              columnIndex: column - 1,
+            })
+          }
+        }
+    }
+
     const { rowIndex: endRowIndex, columnIndex: endColumnIndex } = endPoint
+    console.log('startPoint:', startPoint, 'endPoint:', endPoint)
 
     let newGridArray: Array<CellType[]> = gridArray.map((arr, newColumnIndex) =>
       [...arr].fill(CellType.Empty)
@@ -131,7 +161,7 @@ function App() {
   return (
     <div className='App'>
       <header className='App-header'>
-        <button className='button' onClick={chooseGoalPoints}></button>
+        <button className='button' onClick={chooseGoalPoints2}></button>
         <Panel
           height={row}
           setHeight={setRow}
