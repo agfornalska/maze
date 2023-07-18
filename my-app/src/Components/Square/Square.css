@@ -3,7 +3,7 @@
   background-color: cadetblue;
   height: 60px;
   width: 60px;
-  border: 3px solid red;
+  border: 3px solid rgb(0, 140, 255);
 }
 
 .row {
@@ -19,5 +19,21 @@
   background-color: rgb(125, 95, 160);
   height: 60px;
   width: 60px;
-  border: 3px solid red;
+  border: 3px solid rgb(0, 140, 255);
+}
+
+.start {
+  display: flex;
+  background-color: rgb(135, 250, 131);
+  height: 60px;
+  width: 60px;
+  border: 3px solid rgb(0, 140, 255);
+}
+
+.meta {
+  display: flex;
+  background-color: rgb(250, 131, 161);
+  height: 60px;
+  width: 60px;
+  border: 3px solid rgb(0, 140, 255);
 }
